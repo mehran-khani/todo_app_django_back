@@ -20,7 +20,7 @@ class TokenCreateView(jwt_views.TokenViewBase):
 
         user = authenticate(
             request=request,
-            username=serializer.vaidated_data.get("email"),
+            username=serializer.validated_data.get("email"),
             password=serializer.validated_data.get("password"),
         )
 

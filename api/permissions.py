@@ -14,11 +14,6 @@ class AllowAny(APIPermission):
         return True
 
 
-class IsAdmin(APIPermission):
-    def has_permission(self, request, view):
-        return request.user and getattr(request.user, "is_admin", False)
-
-
 class IsAuthenticated(APIPermission):
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated
