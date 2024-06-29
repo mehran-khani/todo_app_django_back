@@ -40,7 +40,11 @@ class TokenCreateView(jwt_views.TokenViewBase):
             )
 
         return Response(
-            {"access": str(refresh.access_token), "refresh": str(refresh)},
+            {
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "message": "Login successful",
+            },
             status.HTTP_200_OK,
         )
 
@@ -65,6 +69,10 @@ class TokenRefreshView(jwt_views.TokenViewBase):
             refresh.set_exp()
 
         return Response(
-            {"access": str(refresh.access_token), "refresh": str(refresh)},
+            {
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "message": "Token refreshed",
+            },
             status.HTTP_200_OK,
         )

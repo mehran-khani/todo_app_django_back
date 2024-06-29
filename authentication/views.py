@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from api.user.serializers import UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RegisterView(APIView):
@@ -18,12 +19,17 @@ class RegisterView(APIView):
             user = serializer.save()
             # user.generate_verification_token()
             user.send_verification_email()
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
             return Response(
                 {
                     "message": "User registered successfully. Please check your email for verification link.",
-                    "user": UserSerializer(
-                        user
-                    ).data,  # Include serialized user data in the response
+                    "user": UserSerializer(user).data,
+                    "access": access_token,
+                    "refresh": refresh_token,
                 },
                 status=status.HTTP_201_CREATED,
             )
