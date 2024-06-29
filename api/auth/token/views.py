@@ -48,3 +48,23 @@ class TokenCreateView(jwt_views.TokenViewBase):
 class TokenRefreshView(jwt_views.TokenViewBase):
     permission_classes = [AllowAny]
     serializer_class = TokenRefreshSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            refresh = RefreshToken(serializer.validated_data.get("refresh"))
+        except TokenError:
+            raise exceptions.BadRequest(
+                {"detail": "Invalid Token", "code": "invalid_token"}
+            )
+
+        if jwt_setting.ROTATE_REFRESH_TOKEN:
+            refresh.set_jti()
+            refresh.set_exp()
+
+        return Response(
+            {"access": str(refresh.access_token), "refresh": str(refresh)},
+            status.HTTP_200_OK,
+        )
